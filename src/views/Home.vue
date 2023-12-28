@@ -5,9 +5,18 @@
       <label for="to">To:</label>
       <input type="text" id="to" v-model="to" required>
     </div>
-    <div>
-      <label for="type">Type:</label>
-      <input type="number" id="type" v-model.number="type" required>
+    <div class="type-section">
+      <label>Type:</label>
+      <div>
+        <label :for="userType">
+          <input type="radio" v-model="selectedOption" :value="userType" :id="userType">
+          To User
+        </label>
+        <label :for="groupType">
+          <input type="radio" v-model="selectedOption" :value="groupType" :id="groupType">
+          To Group
+        </label>
+      </div>
     </div>
     <div>
       <label for="content">Content:</label>
@@ -27,10 +36,12 @@ import { encodeMessage, decodeMessage } from '@/protocol/message.js';
 export default {
   data() {
     return {
+      selectedOption: 'ToUser',
       to: '',
-      type: 0,
       content: '',
       receivedMessage: '',
+      userType: 'ToUser', // 用户选项的值
+      groupType: 'ToGroup', // 用户组选项的值
     };
   },
   mounted() {
@@ -75,22 +86,34 @@ export default {
       const message = {
         from,
         to: this.to,
-        type: this.type,
+        type: this.selectedOption,
         content: this.content,
       };
 
+      console.log(message)
       // 序列化消息对象
       const encodedMessage = encodeMessage(message);
 
       // 发送消息到后端
       this.$data.socket.send(encodedMessage);
 
-      // 清空输入框
-      this.to = '';
-      this.type = 0;
-      this.content = '';
+      // // 清空输入框
+      // this.to = '';
+      // this.type = 0;
+      // this.content = '';
     },
   },
 };
 </script>
 
+<style>
+.type-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.type-section label {
+  margin-right: 10px;
+}
+</style>
